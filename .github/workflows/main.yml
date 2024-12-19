@@ -6,6 +6,11 @@ on:
     repository: netbox-community/netbox-docker
     types:
       - published
+  workflow_dispatch: # Manual trigger
+    inputs:
+      release_version:
+        description: 'Specify the release version to check'
+        required: false      
 
 jobs:
   notify_new_release:
