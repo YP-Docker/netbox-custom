@@ -1,28 +1,54 @@
-name: Monitor Docker Hub for New Pushes
+name: Monitor Docker Hub for New Tags
 
 on:
+  workflow_dispatch: # Allow manual trigger
   schedule:
-    - cron: '0 * * * *' # Runs every hour
-  workflow_dispatch: # Allow manual triggering
+    - cron: '0 */6 * * *' # Run every 6 hours
 
 jobs:
-  monitor_docker_hub:
+  check_docker_hub:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Fetch latest tags from Docker Hub
         id: fetch_tags
         run: |
           REPO="netboxcommunity/netbox"
-          TAGS=$(curl -s "https://hub.docker.com/v2/repositories/$REPO/tags/" | jq -r '.results[].name')
-          echo "Latest tags: $TAGS"
-          echo "::set-output name=tags::$TAGS"
+          TAGS=$(curl -s "https://hub.docker.com/v2/repositories/$REPO/tags/" | jq -r '.results[].name' | grep -E '^v[0-9]+')
+          LATEST_TAG=$(echo "$TAGS" | sort -Vr | head -n 1)
+          echo "Latest tag: $LATEST_TAG"
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
-      - name: Check for new tags
+      - name: Check for updates
+        id: check_update
         run: |
-          echo "Comparing tags to previously known tags..."
-          # You can add logic here to compare tags and act on new ones.
+          FILE="latest_digest.txt"
+          if [[ -f $FILE ]]; then
+            CURRENT_TAG=$(cat $FILE)
+          else
+            CURRENT_TAG=""
+          fi
+          if [[ "$CURRENT_TAG" != "${{ steps.fetch_tags.outputs.latest_tag }}" ]]; then
+            echo "New version detected: ${{ steps.fetch_tags.outputs.latest_tag }}"
+            echo "update_needed=true" >> $GITHUB_OUTPUT
+          else
+            echo "No new version found."
+            echo "update_needed=false" >> $GITHUB_OUTPUT
 
-      - name: Debug - Display fetched tags
+      - name: Update digest file and commit changes
+        if: steps.check_update.outputs.update_needed == 'true'
         run: |
-          echo "Fetched tags: ${{ steps.fetch_tags.outputs.tags }}"
+          echo "${{ steps.fetch_tags.outputs.latest_tag }}" > latest_digest.txt
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add latest_digest.txt
+          git commit -m "New version detected on Docker Hub: ${{ steps.fetch_tags.outputs.latest_tag }}"
+          git push
+
+      - name: Notify about the new version
+        if: steps.check_update.outputs.update_needed == 'true'
+        run: |
+          echo "New version found: ${{ steps.fetch_tags.outputs.latest_tag }}"
