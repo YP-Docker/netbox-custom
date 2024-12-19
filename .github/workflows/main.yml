@@ -1,0 +1,29 @@
+name: Monitor NetBox Docker Releases
+
+on:
+  release:
+    # Listen for published releases in the netbox-community/netbox-docker repository
+    repository: netbox-community/netbox-docker
+    types:
+      - published
+
+jobs:
+  notify_new_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v3
+
+      - name: Get latest release from NetBox Docker repository
+        id: get_latest_release
+        run: |
+          REPO="netbox-community/netbox-docker"
+          LATEST_RELEASE=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" | jq -r .tag_name)
+          echo "New release detected in NetBox Docker: $LATEST_RELEASE"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token to access public API
+
+      - name: Display release information
+        run: |
+          echo "The latest release in NetBox Docker is: $LATEST_RELEASE"
