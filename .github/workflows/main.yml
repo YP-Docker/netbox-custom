@@ -25,27 +25,40 @@ jobs:
       - name: Check for updates
         id: check_update
         run: |
-          FILE="latest_digest.txt"
+          DIRECTORY="Docker/netbox"
+          FILE="$DIRECTORY/latest_digest.txt"
+          
+          # Ensure the directory exists
+          if [[ ! -d $DIRECTORY ]]; then
+            echo "Error: Directory $DIRECTORY does not exist."
+            exit 1
+          fi
+          
           if [[ -f $FILE ]]; then
             CURRENT_TAG=$(cat $FILE)
           else
             CURRENT_TAG=""
           fi
+      
+          echo "Current tag in file: $CURRENT_TAG"
+          echo "Latest fetched tag: ${{ steps.fetch_tags.outputs.latest_tag }}"
+      
           if [[ "$CURRENT_TAG" != "${{ steps.fetch_tags.outputs.latest_tag }}" ]]; then
             echo "New version detected: ${{ steps.fetch_tags.outputs.latest_tag }}"
+            echo "${{ steps.fetch_tags.outputs.latest_tag }}" > $FILE
             echo "update_needed=true" >> $GITHUB_OUTPUT
           else
             echo "No new version found."
             echo "update_needed=false" >> $GITHUB_OUTPUT
-
-      - name: Update digest file and commit changes
+          fi
+      
+      - name: Commit and Push Changes
         if: steps.check_update.outputs.update_needed == 'true'
         run: |
-          echo "${{ steps.fetch_tags.outputs.latest_tag }}" > latest_digest.txt
-          git config user.name "GitHub Actions"
+          git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git add latest_digest.txt
-          git commit -m "New version detected on Docker Hub: ${{ steps.fetch_tags.outputs.latest_tag }}"
+          git add Docker/netbox/latest_digest.txt
+          git commit -m "Update latest_digest.txt with new tag ${{ steps.fetch_tags.outputs.latest_tag }}"
           git push
 
       - name: Notify about the new version
