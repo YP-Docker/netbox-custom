@@ -1,0 +1,3 @@
+nextbox_ui_plugin >= 1.0.3
+netbox_ipcalculator >= 1.4.9
+netbox_napalm_plugin >= 0.3.0
