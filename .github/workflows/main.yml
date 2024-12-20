@@ -125,6 +125,11 @@ jobs:
       - build_new_docker_image
 
     steps:
+      - name: Debug SMTP Connection
+        run: |
+          echo "Testing SMTP Connection"
+          openssl s_client -starttls smtp -crlf -connect smtp.office365.com:587
+
       - name: Send Email after successfull Docker image Build
         uses: dawidd6/action-send-mail@v4
         with:
