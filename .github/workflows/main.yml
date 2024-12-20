@@ -62,10 +62,10 @@ jobs:
 
     steps:
       - name: Commit and Push Changes
-        if: steps.check_update.outputs.update_needed == 'true'
+        if: needs.check_docker_hub.check_update.outputs.update_needed == 'true'
         uses: EndBug/add-and-commit@v9
         with:
-          message: "New version of Netbox Docker image has been uploaded with tag: ${{ steps.fetch_tags.outputs.latest_tag }}"
+          message: "New version of Netbox Docker image has been uploaded with tag: ${{ needs.check_docker_hub.fetch_tags.outputs.latest_tag }}"
 
       - name: Notify about the new version
         if: steps.check_update.outputs.update_needed == 'true'
