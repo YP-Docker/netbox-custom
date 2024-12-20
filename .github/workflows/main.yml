@@ -130,8 +130,8 @@ jobs:
         with:
           to: '${{secrets.MAIL_TO}}'
           subject: 'Github Actions - New Netbox Image - ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}'
-          body: '<em>New Nexbox images has been build and pushed to Docker HUB.
-            The lattest version of Netbox is: ${{ needs.check_docker_hub.outputs.latest_tag }}
-            The Docker image tag is: ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</em>'
+          body: '<p>New Nexbox images has been build and pushed to Docker HUB.</p>
+            <p>The lattest version of Netbox is: ${{ needs.check_docker_hub.outputs.latest_tag }}</p>
+            <p>The Docker image tag is: ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</p>'
           type: 'text/html'
 
