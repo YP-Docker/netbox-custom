@@ -88,7 +88,7 @@ jobs:
 
   build_new_docker_image:
     runs-on: ubuntu-latest
-    needs: commit_git_changes
+    needs: [check_docker_hub,commit_git_changes]
 
     steps:
       - name: Login to Docker Hub
@@ -112,5 +112,5 @@ jobs:
           sbom: true
           provenance: mode=max
           push: false
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}"-build."${{ steps.tag_timestamp.outputs.timestamp }}"
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}
 
