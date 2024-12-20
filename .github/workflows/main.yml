@@ -128,14 +128,11 @@ jobs:
       - name: Send Email after successfull Docker image Build
         uses: dawidd6/action-send-mail@v4
         with:
-          # Specify connection via URL (replaces server_address, server_port, secure,
-          # username and password)
-          #
-          # Format:
-          #
-          #  * smtp://user:password@server:port
-          #  * smtp+starttls://user:password@server:port
-          connection_url: ${{secrets.MAIL_CONNECTION}}
+          server_address: smtp.office365.com
+          server_port: 587
+          secure: true
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
           subject: Github Actions - New Netbox Image - ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}
           to: ${{secrets.MAIL_TO}}
           from: ${{secrets.MAIL_FROM}}
