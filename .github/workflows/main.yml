@@ -125,27 +125,13 @@ jobs:
 #      - build_new_docker_image
 
     steps:
-      - name: Debug SMTP Connection
-        run: |
-          echo "Testing SMTP Connection"
-          openssl s_client -starttls smtp -crlf -connect smtp.office365.com:587
-
       - name: Send Email after successfull Docker image Build
-        uses: dawidd6/action-send-mail@v4
+        uses: cinotify/github-action@main
         with:
-          server_address: smtp.office365.com
-          server_port: 587
-          secure: true
-          ignore_cert: true
-          username: ${{secrets.MAIL_USERNAME}}
-          password: ${{secrets.MAIL_PASSWORD}}
-          subject: Github Actions - New Netbox Image - ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}
-          to: ${{secrets.MAIL_TO}}
-          from: ${{secrets.MAIL_FROM}}
-          # Optional plain body:
-          body: | 
-            New Nexbox images has been build and pushed to Docker HUB.
+          to: '${{secrets.MAIL_TO}}'
+          subject: 'Github Actions - New Netbox Image - ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}'
+          body: '<em>New Nexbox images has been build and pushed to Docker HUB.
             The lattest version of Netbox is: ${{ needs.check_docker_hub.outputs.latest_tag }}
-            The Docker image tag is: ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}
-          # Optional priority: 'high', 'normal' (default) or 'low'
-          priority: high
+            The Docker image tag is: ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</em>'
+          type: 'text/html'
+
