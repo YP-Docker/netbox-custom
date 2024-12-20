@@ -81,8 +81,8 @@ jobs:
         id: commit_changes_with_latest_tag
         with:
           add: 'Docker/latest_version.txt'
-          message: "New version of Netbox Docker image has been uploaded with tag: ${{ needs.check_docker_hub.outputs.fetch_tags.latest_tag }}"
+          message: "New version of Netbox Docker image has been uploaded with tag: ${{ needs.check_docker_hub.outputs.latest_tag }}"
 
       - name: Notify about the new version
         run: |
-          echo "New version found: ${{ needs.check_docker_hub.outputs.fetch_tags.latest_tag }}"
+          echo "New version found: ${{ needs.check_docker_hub.outputs.latest_tag }}"
