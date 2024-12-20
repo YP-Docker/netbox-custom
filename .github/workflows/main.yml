@@ -104,11 +104,12 @@ jobs:
         id: tag_timestamp
         run: |
           echo "timestamp=$(date +'%d%m%Y-%H%M')" >> $GITHUB_OUTPUT
+          ls -lh
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: Docker/netbox/.
+          context: "{{defaultContext}}:Docker/netbox/"
           sbom: true
           provenance: mode=max
           push: false
