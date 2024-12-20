@@ -64,8 +64,8 @@ jobs:
       - name: Commit and Push Changes
         uses: EndBug/add-and-commit@v9
         with:
-          message: "New version of Netbox Docker image has been uploaded with tag: ${{ needs.check_docker_hub.fetch_tags.outputs.latest_tag }}"
+          message: "New version of Netbox Docker image has been uploaded with tag: ${{ needs.check_docker_hub.outputs.fetch_tags.latest_tag }}"
 
       - name: Notify about the new version
         run: |
-          echo "New version found: ${{ steps.fetch_tags.outputs.latest_tag }}"
+          echo "New version found: ${{ needs.check_docker_hub.outputs.fetch_tags.latest_tag }}"
