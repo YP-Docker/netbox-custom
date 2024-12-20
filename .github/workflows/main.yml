@@ -149,7 +149,7 @@ jobs:
           logfile        ~/.msmtp.log
 
           account default
-          host smtp.office365.com
+          host smtp.gmail.com
           port 587
           from ${{ secrets.MAIL_FROM }}
           user ${{ secrets.MAIL_USERNAME }}
