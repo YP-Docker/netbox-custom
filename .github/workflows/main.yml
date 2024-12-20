@@ -135,17 +135,42 @@ jobs:
 #            <p>The Docker image tag is: ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</p>'
 #          type: 'text/html'
 
-        - uses: joekrom/px-notifier@main
-          with:
-            smtp_address: "smtp.office365.com"
-            smtp_port: "587"
-            username: "${{secrets.MAIL_USERNAME}}"
-            password: "${{secrets.MAIL_PASSWORD}}"
-            subject: "Github Actions - New Netbox Image - ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}"
-            ssl: "true"
-            from: "${{secrets.MAIL_USERNAME}}"
-            to: "${{secrets.MAIL_TO}}"
-            body: "<p>New Nexbox images has been build and pushed to Docker HUB.</p>
-#            <p>The lattest version of Netbox is: ${{ needs.check_docker_hub.outputs.latest_tag }}</p>
-#            <p>The Docker image tag is: ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</p>"
+      - name: Set up msmtp
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y msmtp
+
+          # Create msmtp configuration
+          cat <<EOF > ~/.msmtprc
+          defaults
+          auth           on
+          tls            on
+          tls_trust_file /etc/ssl/certs/ca-certificates.crt
+          logfile        ~/.msmtp.log
+
+          account default
+          host smtp.office365.com
+          port 587
+          from ${{ secrets.MAIL_FROM }}
+          user ${{ secrets.MAIL_USERNAME }}
+          password ${{ secrets.MAIL_PASSWORD }}
+          EOF
+
+          chmod 600 ~/.msmtprc
+
+      - name: Send HTML Email
+        run: |
+          cat <<EOM > email.txt
+          From: ${{ secrets.MAIL_FROM }}
+          To: ${{ secrets.MAIL_TO }}
+          Subject: New Netbox Docker Image Available
+          MIME-Version: 1.0
+          Content-Type: text/html
+
+          <p>New Netbox images have been built and pushed to Docker HUB.</p>
+          <p>The latest version of Netbox is: <strong>${{ needs.check_docker_hub.outputs.latest_tag }}</strong></p>
+          <p>The Docker image tag is: <strong>${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</strong></p>
+          EOM
+
+          cat email.txt | msmtp --debug --from=${{ secrets.MAIL_FROM }} -t
 
