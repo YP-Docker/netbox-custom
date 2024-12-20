@@ -12,6 +12,9 @@ jobs:
   # Check Docker Hub for lattest version of Netbox
   check_docker_hub:
     runs-on: ubuntu-latest
+    outputs:
+      latest_tag: ${{ steps.fetch_tags.outputs.latest_tag}}
+      update_needed: ${{ steps.fetch_tags.outputs.update_needed}}
 
     steps:
       - name: Checkout repository
@@ -49,7 +52,6 @@ jobs:
       
           if [[ "$CURRENT_TAG" != "${{ steps.fetch_tags.outputs.latest_tag }}" ]]; then
             echo "New version detected: ${{ steps.fetch_tags.outputs.latest_tag }}"
-            echo "${{ steps.fetch_tags.outputs.latest_tag }}" > $FILE
             echo "update_needed=true" >> $GITHUB_OUTPUT
           else
             echo "No new version found."
@@ -59,14 +61,24 @@ jobs:
   build-docker-image:
     runs-on: ubuntu-latest
     needs: check_docker_hub
+    if: ${{needs.check_docker_hub.outputs.update_needed == 'true'}}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Create file with newest version
+        run: |
+          DIRECTORY="Docker"
+          FILE="$DIRECTORY/latest_version.txt"
+          
+          echo "${{ needs.check_docker_hub.outputs.latest_tag }}" > $FILE
+                   
+
       - name: Commit and Push Changes
         uses: EndBug/add-and-commit@v9
         with:
+          add: 'Docker/latest_version.txt'
           message: "New version of Netbox Docker image has been uploaded with tag: ${{ needs.check_docker_hub.outputs.fetch_tags.latest_tag }}"
 
       - name: Notify about the new version
