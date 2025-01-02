@@ -23,7 +23,7 @@ jobs:
 
       - name: Send Test Email
         run: |
-          echo "Subject: Test Email" | sendmail -v recipient@example.com
+          echo "Subject: Test Email" | sendmail -v ${{ secrets.MAIL_TO }}
         env:
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
