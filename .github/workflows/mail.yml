@@ -19,16 +19,10 @@ jobs:
         run: |
           # Set your hostname for Postfix
           sudo postconf -e 'myhostname = github-actions.ii-solutions.co.uk'
-          # Configure SMTP relay server (e.g., Office365)
+          sudo postconf -e 'mydomain  = ii-solutions.co.uk'
+          sudo postconf -e 'myorigin  = ${{ secrets.FROM }}'
           echo "[smtp.office365.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
           sudo postmap /etc/postfix/sasl_passwd
-          # Add generic rewrite rules to rewrite "From" address to no-reply@yourdomain.com
-          echo "/.+/    ${{ secrets.MAIL_FROM }}" | sudo tee /etc/postfix/generic
-          sudo postmap /etc/postfix/generic
-          # Configure Postfix to use the generic file for "From" rewriting
-          sudo postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
-          # Restart Postfix to apply the configuration
-          sudo systemctl restart postfix
 
       - name: Create HTML email content
         run: |
