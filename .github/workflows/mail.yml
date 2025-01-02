@@ -21,11 +21,6 @@ jobs:
           echo "[smtp.office365.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
           sudo postmap /etc/postfix/sasl_passwd
 
-      - name: Debug config
-        run: |
-          sudo cat /etc/postfix/sasl_passwd    
-          sudo ls -lh  /etc/postfix/    
-
       - name: Create HTML email content
         run: |
           cat <<EOM > email.html
@@ -49,7 +44,8 @@ jobs:
 
           # Loop through the array of email addresses and send the email
           for recipient in "${email_array[@]}"; do
-            (echo "To: $recipient"; 
+            (echo "From: ${{ secrets.MAIL_FROM }}"; 
+             echo "To: $recipient"; 
              echo "Subject: Test HTML Email"; 
              echo "MIME-Version: 1.0"; 
              echo "Content-Type: text/html; charset=UTF-8"; 
