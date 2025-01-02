@@ -47,12 +47,21 @@ jobs:
 
           # Loop through the array of email addresses and send the email
           for recipient in "${email_array[@]}"; do
-            (echo "From: ${{ secrets.MAIL_FROM }}"; 
-             echo "To: $recipient"; 
+            (echo "To: $recipient"; 
              echo "Subject: Test HTML Email"; 
              echo "MIME-Version: 1.0"; 
              echo "Content-Type: text/html; charset=UTF-8"; 
              echo ""; 
-             cat email.html) | sendmail -t
+             cat email.html) | sendmail -v -t
             echo "Sent email to $recipient"
           done
+
+      - name: Check Postfix Mail Log
+        run: |
+          sudo cat /var/log/mail.log
+
+      - name: Check Postfix Mail Queue
+        run: |
+          mailq
+          
+          
