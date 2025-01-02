@@ -20,7 +20,7 @@ jobs:
           # Set your hostname for Postfix
           sudo postconf -e 'myhostname = github-actions.ii-solutions.co.uk'
           sudo postconf -e 'mydomain  = ii-solutions.co.uk'
-          sudo postconf -e 'myorigin  = ii-solutions.co.uk
+          sudo postconf -e 'myorigin  = ii-solutions.co.uk'
           echo "runner no-reply@ii-solutions.co.uk" | sudo tee /etc/postfix/generic
           sudo postmap /etc/postfix/generic
           sudo postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
