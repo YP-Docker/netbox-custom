@@ -1,0 +1,29 @@
+name: Send Email via Postfix
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Postfix
+        run: |
+          sudo apt-get install -y postfix
+          sudo postconf -e 'myhostname = smtp.yourdomain.com'
+
+      - name: Configure Postfix
+        run: |
+          echo "[smtp.office365.com]:587 ${SMTP_USERNAME}:${SMTP_PASSWORD}" | sudo tee /etc/postfix/sasl_passwd
+          sudo postmap /etc/postfix/sasl_passwd
+
+      - name: Send Test Email
+        run: |
+          echo "Subject: Test Email" | sendmail -v recipient@example.com
+        env:
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
