@@ -139,6 +139,7 @@ jobs:
           sudo postconf -e "smtp_sasl_security_options = noanonymous"
           sudo postconf -e "smtp_tls_security_level = encrypt"
           sudo postconf -e "smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt"
+          sudo postconf -e "debug_peer_list = smtp.office365.com"
 
           # Add SMTP credentials
           echo "[smtp.office365.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
@@ -150,6 +151,10 @@ jobs:
           # Restart Postfix
           sudo systemctl restart postfix
 
+      - name: Test email
+        run: echo "Test email body" | mail -s "Test Subject" ${{ secrets.MAIL_TO }}
+
+
       - name: Send HTML Email
         run: |
           cat <<EOM > email.html
@@ -159,6 +164,10 @@ jobs:
           EOM
 
           # Send the email using the `mail` command         
-          mail -s "$(echo -e "New Netbox Docker Image Available - ${{ needs.check_docker_hub.outputs.latest_tag }}\nContent-Type: text/html")"  ${{ secrets.MAIL_TO }}  <  email.html
+          mail -a "Content-Type: text/html" -s "Subject" ${{ secrets.MAIL_TO }} < email.html
+
+      - name: Check Postfix logs
+        run: sudo tail -n 50 /var/log/mail.log
+
 
 
