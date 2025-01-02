@@ -14,16 +14,46 @@ jobs:
       - name: Set up Postfix
         run: |
           sudo apt-get install -y postfix
-          sudo postconf -e 'myhostname = smtp.yourdomain.com'
+          sudo postconf -e 'github_actions = github-actions.ii-solutions.co.uk'
 
       - name: Configure Postfix
         run: |
-          echo "[smtp.office365.com]:587 ${SMTP_USERNAME}:${SMTP_PASSWORD}" | sudo tee /etc/postfix/sasl_passwd
+          echo "[smtp.office365.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
           sudo postmap /etc/postfix/sasl_passwd
 
-      - name: Send Test Email
+      - name: Debug config
         run: |
-          echo "Subject: Test Email" | sendmail -v ${{ secrets.MAIL_TO }}
-        env:
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          sudo cat /etc/postfix/sasl_passwd    
+          sudo cat /etc/postfix/generic     
+
+      - name: Create HTML email content
+        run: |
+          cat <<EOM > email.html
+          <html>
+          <head><title>Test HTML Email</title></head>
+          <body>
+          <p>New Netbox images have been built and pushed to Docker HUB.</p>
+          <p>The latest version of Netbox is: <strong>TEST</strong></p>
+          <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
+          </body>
+          </html>
+          EOM
+
+      - name: Send email to multiple recipients
+        run: |
+          # Retrieve the secret containing the email addresses
+          emails=" ${{ secrets.MAIL_TO }}"
+
+          # Split the emails by semicolon
+          IFS=';' read -r -a email_array <<< "$emails"
+
+          # Loop through the array of email addresses and send the email
+          for recipient in "${email_array[@]}"; do
+            (echo "To: $recipient"; 
+             echo "Subject: Test HTML Email"; 
+             echo "MIME-Version: 1.0"; 
+             echo "Content-Type: text/html; charset=UTF-8"; 
+             echo ""; 
+             cat email.html) | sendmail -t
+            echo "Sent email to $recipient"
+          done
