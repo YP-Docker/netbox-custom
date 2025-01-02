@@ -152,21 +152,13 @@ jobs:
 
       - name: Send HTML Email
         run: |
-          cat <<EOM > email.txt
-          From: ${{ secrets.MAIL_FROM }}
-          To: ${{ secrets.MAIL_TO }}
-          Subject: New Netbox Docker Image Available - ${{ needs.check_docker_hub.outputs.latest_tag }}
-          MIME-Version: 1.0
-          Content-Type: text/html
-
+          cat <<EOM > email.html
           <p>New Netbox images have been built and pushed to Docker HUB.</p>
           <p>The latest version of Netbox is: <strong>${{ needs.check_docker_hub.outputs.latest_tag }}</strong></p>
           <p>The Docker image tag is: <strong>${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</strong></p>
           EOM
 
-          # Send the email using the `mail` command
-          /usr/bin/mail -s "New Netbox Docker Image Available - ${{ needs.check_docker_hub.outputs.latest_tag }}" \
-          -a "Content-Type: text/html" \
-          ${{ secrets.MAIL_TO }} < email.txt
+          # Send the email using the `mail` command         
+          mail -s "$(echo -e "New Netbox Docker Image Available - ${{ needs.check_docker_hub.outputs.latest_tag }}\nContent-Type: text/html")"  ${{ secrets.MAIL_TO }}  <  email.html
 
 
