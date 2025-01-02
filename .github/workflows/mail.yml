@@ -24,7 +24,7 @@ jobs:
       - name: Debug config
         run: |
           sudo cat /etc/postfix/sasl_passwd    
-          sudo cat /etc/postfix/generic     
+          sudo ls -lh  /etc/postfix/    
 
       - name: Create HTML email content
         run: |
