@@ -16,7 +16,6 @@ jobs:
           sudo apt-get install -y postfix
           sudo postconf -e 'myhostname = github-actions.ii-solutions.co.uk'
           sudo postconf -e 'mydomain = ii-solutions.co.uk'
-          sudo postconf -e 'relayhost = [smtp.office365.com]:587'
 
       - name: Configure Postfix
         run: |
