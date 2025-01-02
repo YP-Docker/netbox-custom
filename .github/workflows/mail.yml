@@ -20,7 +20,7 @@ jobs:
           # Set your hostname for Postfix
           sudo postconf -e 'myhostname = github-actions.ii-solutions.co.uk'
           sudo postconf -e 'mydomain  = ii-solutions.co.uk'
-          sudo postconf -e 'myorigin  = ${{ secrets.FROM }}'
+          sudo postconf -e 'myorigin  = ${{ secrets.MAIL_FROM }}'
           echo "[smtp.office365.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
           sudo postmap /etc/postfix/sasl_passwd
 
