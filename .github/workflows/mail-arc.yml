@@ -59,7 +59,7 @@ jobs:
           cat email.html
       - name: Send Email
         run: |
-          msmtp -a office365 -t < email.html
+          msmtp -a office365 -C $(pwd)/.msmtprc -t < $(pwd)/email.html
 
       - name: Debug logs
         run: |
