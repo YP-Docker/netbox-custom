@@ -47,7 +47,7 @@ jobs:
       - name: Send email to multiple recipients
         run: |
           # Retrieve the secret containing the email addresses
-          emails=" ${{ secrets.MAIL_TO }}"
+          emails="yuriy.plotnikov@ii-solutions.co.uk"
 
           # Split the emails by semicolon
           IFS=';' read -r -a email_array <<< "$emails"
@@ -72,14 +72,6 @@ jobs:
           mailq
           postqueue -f
           mailq
-
-
-      - name: check domains
-        run: |
-          nslookup smtp.office365.com
-          nslookup smtp.google.com  
-          mailq
-          
 
           
           
