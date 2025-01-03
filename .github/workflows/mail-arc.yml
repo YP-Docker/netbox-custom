@@ -33,6 +33,7 @@ jobs:
 
       - name: Create HTML email content
         run: |
+          pwd
           cat <<EOM > email.html
             Subject: Your Email Subject from Github Action ARC
             Content-Type: text/html; charset=UTF-8
@@ -50,6 +51,7 @@ jobs:
 
       - name: Send Email
         run: |
+          pwd
           msmtp -a office365 -t < email.html
 
       - name: Debug logs
