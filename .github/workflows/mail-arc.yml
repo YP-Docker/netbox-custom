@@ -25,7 +25,7 @@ jobs:
           echo "runner no-reply@${{ secrets.MAIL_DOMAIN }}" | sudo tee /etc/postfix/generic
           sudo postmap /etc/postfix/generic
           sudo postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
-          echo "[smtp.office365.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
+          echo "[smtp.gmail.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
           sudo postmap /etc/postfix/sasl_passwd
           sudo postconf -e 'maillog_file = /var/log/mail.log'
           sudo touch /var/log/mail.log
