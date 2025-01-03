@@ -10,7 +10,6 @@ jobs:
   hello_world_job:
     runs-on: arc-runner-set-k3s
     steps:
-      -
       - name: Hello world action step
         id: hello
         uses: YP-Docker/notify-with-mail@v1.0.1
