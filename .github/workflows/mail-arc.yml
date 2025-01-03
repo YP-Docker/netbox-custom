@@ -14,7 +14,7 @@ jobs:
       - name: Set up Postfix
         run: |
           sudo apt-get update
-          sudo apt-get install -y postfix msmtp
+          sudo apt-get install -y postfix msmtp curl dnsutils
 
       - name: Configure Postfix
         run: |
@@ -73,8 +73,11 @@ jobs:
 
       - name: check domains
         run: |
+          curl -v telnet://smtp.office365.com:587
+          curl -v telnet://smtp.google.com:587
           nslookup smtp.office365.com
-          nslookup smtp.gmail.com
+          nslookup smtp.google.com
+          
 
           
           
