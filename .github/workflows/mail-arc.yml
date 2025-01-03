@@ -39,12 +39,12 @@ jobs:
           Content-Type: text/html; charset=UTF-8
           To: yuriy.plo@gmail.com
           <html>
-            <head><title>Test HTML Email</title></head>
-            <body>
-              <p>New Netbox images have been built and pushed to Docker HUB.</p>
-              <p>The latest version of Netbox is: <strong>TEST</strong></p>
-              <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
-            </body>
+          <head><title>Test HTML Email</title></head>
+          <body>
+          <p>New Netbox images have been built and pushed to Docker HUB.</p>
+          <p>The latest version of Netbox is: <strong>TEST</strong></p>
+          <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
+          </body>
           </html>
           EOM
 
