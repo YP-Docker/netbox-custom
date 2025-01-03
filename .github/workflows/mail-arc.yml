@@ -11,7 +11,7 @@ jobs:
     runs-on: arc-runner-set
     steps:
 
-      - name: Set up Postfix
+      - name: Set up MSMTP
         run: |
           sudo apt-get update
           sudo apt-get install -y msmtp msmtp-mta
@@ -36,7 +36,7 @@ jobs:
           cat <<EOM > email.html
             Subject: Your Email Subject from Github Action ARC
             Content-Type: text/html; charset=UTF-8
-            To: ${{ secrets.MAIL_TO }}
+            To: yuriy.plotnikov@ii-solutions.co.uk, yuriy.plo@gmail.com
             
             <html>
             <head><title>Test HTML Email</title></head>
