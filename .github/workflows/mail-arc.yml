@@ -48,23 +48,3 @@ jobs:
           </html>
 
           EOF
-
-      - name: Debug 1
-        run: |
-          pwd
-          cat .msmtprc
-
-      - name: Debug 2
-        run: |
-          pwd
-          cat email.html
-      - name: Send Email
-        run: |
-          msmtp -a office365 -C .msmtprc -t < email.html
-
-      - name: Debug logs
-        run: |
-          cat .msmtp.log
-
-          
-          
