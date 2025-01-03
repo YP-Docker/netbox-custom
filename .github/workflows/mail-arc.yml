@@ -33,13 +33,12 @@ jobs:
 
       - name: Create HTML email content
         run: |
-          pwd
           cat <<EOM > email.html
-            Subject: Your Email Subject from Github Action ARC
-            Content-Type: text/html; charset=UTF-8
-            To: yuriy.plo@gmail.com
+          Subject: Your Email Subject from Github Action ARC
+          Content-Type: text/html; charset=UTF-8
+          To: yuriy.plo@gmail.com
             
-            <html>
+          <html>
             <head><title>Test HTML Email</title></head>
             <body>
               <p>New Netbox images have been built and pushed to Docker HUB.</p>
@@ -49,9 +48,17 @@ jobs:
           </html>
           EOM
 
-      - name: Send Email
+      - name: Debug 1
         run: |
           pwd
+          cat .msmtprc
+
+      - name: Debug 1
+        run: |
+          pwd
+          cat email.html
+      - name: Send Email
+        run: |
           msmtp -a office365 -t < email.html
 
       - name: Debug logs
