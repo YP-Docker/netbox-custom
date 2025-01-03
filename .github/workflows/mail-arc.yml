@@ -73,10 +73,16 @@ jobs:
 
       - name: check domains
         run: |
-          curl -v telnet://smtp.office365.com:587
-          curl -v telnet://smtp.google.com:587
           nslookup smtp.office365.com
           nslookup smtp.google.com
+
+      - name: Check Postfix Mail Log
+        run: |
+          sudo cat /var/log/mail.log
+
+      - name: Check Postfix Mail Queue
+        run: |
+          mailq          
           
 
           
