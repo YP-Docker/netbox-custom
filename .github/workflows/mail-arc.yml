@@ -1,4 +1,4 @@
-name: Send Email via Postfix
+name: Send Email via Postfix - ARC
 
 permissions:
   contents: write
