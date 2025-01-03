@@ -18,7 +18,7 @@ jobs:
 
       - name: Configure MSMTP
         run: |
-          cat <<EOM > .msmtprc
+          cat << 'EOF' > .msmtprc
             account office365
             host smtp.office365.com
             port 587
@@ -29,7 +29,7 @@ jobs:
             tls on
             auth on
             logfile .msmtp.log
-          EOM
+          EOF
           chmod 600 .msmtprc
 
       - name: Create HTML email content
@@ -37,17 +37,14 @@ jobs:
           cat << 'EOF' > email.html
           Subject: Your Email Subject
           Content-Type: text/html; charset=UTF-8
-          To: yuriy.plo@gmail.com
+          To: ${{ secrets.MAIL_TO }}
           
           <html>
-            <head>
-            <title>Test HTML Email</title>
-            </head>
-              <body>
-                <p>New Netbox images have been built and pushed to Docker HUB.</p>
-                <p>The latest version of Netbox is: <strong>TEST</strong></p>
-                <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
-            </body>
+            <body>
+              <p>New Netbox images have been built and pushed to Docker HUB.</p>
+              <p>The latest version of Netbox is: <strong>TEST</strong></p>
+              <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
+          </body>
           </html>
 
           EOF
