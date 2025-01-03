@@ -22,7 +22,8 @@ jobs:
           sudo postconf -e 'myhostname = github-actions.${{ secrets.MAIL_DOMAIN }}'
           sudo postconf -e 'mydomain  = ${{ secrets.MAIL_DOMAIN }}'
           sudo postconf -e 'myorigin  = ${{ secrets.MAIL_DOMAIN }}'
-          echo "runner no-reply@${{ secrets.MAIL_DOMAIN }}" | sudo tee /etc/postfix/generic
+#          echo "runner no-reply@${{ secrets.MAIL_DOMAIN }}" | sudo tee /etc/postfix/generic
+          echo "runner yuriy.plo@gmail.com | sudo tee /etc/postfix/generic
           sudo postmap /etc/postfix/generic
           sudo postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
           echo "[smtp.gmail.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
