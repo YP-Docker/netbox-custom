@@ -34,17 +34,18 @@ jobs:
 
       - name: Create HTML email content
         run: |
-          cat << EOM > email.html
+          cat << 'EOF' > email.html
           Subject: Your Email Subject
           Content-Type: text/html; charset=UTF-8
           To: yuriy.plo@gmail.com
+          
           <html>
-          <body>
-          <h1>Hello, this is your email content!</h1>
-          <p>This is an example of an HTML email.</p>
-          </body>
+            <body>
+              <h1>Hello, this is your email content!</h1>
+              <p>This is an example of an HTML email.</p>
+            </body>
           </html>
-          EOM
+          EOF
 
       - name: Debug 1
         run: |
