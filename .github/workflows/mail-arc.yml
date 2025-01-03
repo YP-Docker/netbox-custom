@@ -18,7 +18,7 @@ jobs:
 
       - name: Configure MSMTP
         run: |
-          cat <<EOM > $(pwd)/.msmtprc
+          cat <<EOM > .msmtprc
             account office365
             host smtp.office365.com
             port 587
@@ -30,15 +30,14 @@ jobs:
             auth on
             logfile .msmtp.log
           EOM
-          chmod 600 $(pwd)/.msmtprc
+          chmod 600 .msmtprc
 
       - name: Create HTML email content
         run: |
-          cat <<EOM > $(pwd)/email.html
+          cat <<EOM > email.html
           Subject: Your Email Subject from Github Action ARC
           Content-Type: text/html; charset=UTF-8
           To: yuriy.plo@gmail.com
-            
           <html>
             <head><title>Test HTML Email</title></head>
             <body>
@@ -60,7 +59,7 @@ jobs:
           cat email.html
       - name: Send Email
         run: |
-          msmtp -a office365 -C $(pwd)/.msmtprc -t < $(pwd)/email.html
+          msmtp -a office365 -C .msmtprc -t < email.html
 
       - name: Debug logs
         run: |
