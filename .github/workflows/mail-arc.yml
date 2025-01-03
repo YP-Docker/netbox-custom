@@ -34,10 +34,11 @@ jobs:
 
       - name: Create HTML email content
         run: |
-          cat <<< ' > email.html
+          cat << EOM > email.html
             Subject: Your Email Subject from Github Action ARC
             Content-Type: text/html; charset=UTF-8
             To: yuriy.plo@gmail.com
+          
             <html>
             <head><title>Test HTML Email</title></head>
             <body>
@@ -45,7 +46,8 @@ jobs:
             <p>The latest version of Netbox is: <strong>TEST</strong></p>
             <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
             </body>
-            </html> '
+            </html>
+          EOM
 
       - name: Debug 1
         run: |
