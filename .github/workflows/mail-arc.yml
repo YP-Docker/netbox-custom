@@ -70,19 +70,15 @@ jobs:
       - name: Check Postfix Mail Queue
         run: |
           mailq
+          postqueue -f
+          mailq
+
 
       - name: check domains
         run: |
           nslookup smtp.office365.com
-          nslookup smtp.google.com
-
-      - name: Check Postfix Mail Log
-        run: |
-          sudo cat /var/log/mail.log
-
-      - name: Check Postfix Mail Queue
-        run: |
-          mailq          
+          nslookup smtp.google.com  
+          mailq
           
 
           
