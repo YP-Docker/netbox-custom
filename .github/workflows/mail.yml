@@ -14,7 +14,7 @@ jobs:
       - name: Set up Postfix
         run: |
           sudo apt-get update
-          sudo apt-get install -y postfix
+          sudo apt-get install -y postfix msmtp
 
       - name: Configure Postfix
         run: |
@@ -27,6 +27,7 @@ jobs:
           sudo postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
           echo "[smtp.office365.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
           sudo postmap /etc/postfix/sasl_passwd
+          service postfix start
 
       - name: Create HTML email content
         run: |
