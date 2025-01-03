@@ -70,5 +70,11 @@ jobs:
       - name: Check Postfix Mail Queue
         run: |
           mailq
+
+      - name: check domains
+        run: |
+          nslookup smtp.office365.com
+          nslookup smtp.gmail.com
+
           
           
