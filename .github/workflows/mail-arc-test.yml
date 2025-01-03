@@ -9,6 +9,10 @@ on:
 jobs:
   hello_world_job:
     runs-on: arc-runner-set-k3s
+    container:
+      image: ubuntu:22.04  # You can use a different container image depending on your needs
+      options: --entrypoint ""  # Optional, use if you need to override the default entrypoint
+
     steps:
       - name: Hello world action step
         id: hello
