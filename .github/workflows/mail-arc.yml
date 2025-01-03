@@ -37,7 +37,7 @@ jobs:
           cat <<EOM > email.html
             Subject: Your Email Subject from Github Action ARC
             Content-Type: text/html; charset=UTF-8
-            To: yuriy.plotnikov@ii-solutions.co.uk, yuriy.plo@gmail.com
+            To: yuriy.plo@gmail.com
             
             <html>
             <head><title>Test HTML Email</title></head>
