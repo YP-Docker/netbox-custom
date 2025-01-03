@@ -4,7 +4,7 @@ permissions:
   contents: write
 
 on:
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   send-email:
@@ -14,64 +14,47 @@ jobs:
       - name: Set up Postfix
         run: |
           sudo apt-get update
-          sudo apt-get install -y postfix msmtp curl dnsutils
+          sudo apt-get install -y msmtp msmtp-mta
 
-      - name: Configure Postfix
+      - name: Configure MSMTP
         run: |
-          # Set your hostname for Postfix
-          sudo postconf -e 'myhostname = github-actions.${{ secrets.MAIL_DOMAIN }}'
-          sudo postconf -e 'mydomain  = ${{ secrets.MAIL_DOMAIN }}'
-          sudo postconf -e 'myorigin  = ${{ secrets.MAIL_DOMAIN }}'
-          echo "runner yuriy.plo@gmail.com" | sudo tee /etc/postfix/generic
-          sudo postmap /etc/postfix/generic
-          sudo postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
-          echo "[smtp.gmail.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
-          sudo postmap /etc/postfix/sasl_passwd
-          sudo postconf -e 'maillog_file = /var/log/mail.log'
-          sudo touch /var/log/mail.log
-          sudo service postfix start
+          cat <<EOM > .msmtprc
+            account office365
+            host smtp.office365.com
+            port 587
+            domain ${{ secrets.MAIL_DOMAIN }}
+            from ${{ secrets.MAIL_FROM }}
+            user ${{ secrets.MAIL_USERNAME }}
+            password ${{ secrets.MAIL_PASSWORD }}
+            tls on
+            auth on
+            logfile .msmtp.log
+          EOM
 
       - name: Create HTML email content
         run: |
           cat <<EOM > email.html
-          <html>
-          <head><title>Test HTML Email</title></head>
-          <body>
-          <p>New Netbox images have been built and pushed to Docker HUB.</p>
-          <p>The latest version of Netbox is: <strong>TEST</strong></p>
-          <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
-          </body>
+            Subject: Your Email Subject from Github Action ARC
+            Content-Type: text/html; charset=UTF-8
+            To: ${{ secrets.MAIL_TO }}
+            
+            <html>
+            <head><title>Test HTML Email</title></head>
+            <body>
+              <p>New Netbox images have been built and pushed to Docker HUB.</p>
+              <p>The latest version of Netbox is: <strong>TEST</strong></p>
+              <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
+            </body>
           </html>
           EOM
 
-      - name: Send email to multiple recipients
+      - name: Send Email
         run: |
-          # Retrieve the secret containing the email addresses
-          emails="yuriy.plotnikov@ii-solutions.co.uk"
+          msmtp -a office365 -t < email.html
 
-          # Split the emails by semicolon
-          IFS=';' read -r -a email_array <<< "$emails"
-
-          # Loop through the array of email addresses and send the email
-          for recipient in "${email_array[@]}"; do
-            (echo "To: $recipient"; 
-             echo "Subject: Test HTML Email"; 
-             echo "MIME-Version: 1.0"; 
-             echo "Content-Type: text/html; charset=UTF-8"; 
-             echo ""; 
-             cat email.html) | sendmail -v -t
-            echo "Sent email to $recipient"
-          done
-
-      - name: Check Postfix Mail Log
+      - name: Debug logs
         run: |
-          sudo cat /var/log/mail.log
-
-      - name: Check Postfix Mail Queue
-        run: |
-          mailq
-          postqueue -f
-          mailq
+          cat .msmtp.log
 
           
           
