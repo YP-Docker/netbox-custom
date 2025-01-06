@@ -133,7 +133,7 @@ jobs:
 
       - name: Configure MSMTP
         run: |
-          cat << 'EOF' > .msmtprc
+          cat << 'EOF' > msmtprc
             account office365
             host smtp.office365.com
             port 587
@@ -143,9 +143,9 @@ jobs:
             password ${{ secrets.MAIL_PASSWORD }}
             tls on
             auth on
-            logfile .msmtp.log
+            logfile msmtp.log
           EOF
-          chmod 600 .msmtprc
+          chmod 600 msmtprc
 
       - name: Debug 1
         run: |
@@ -176,7 +176,7 @@ jobs:
 
       - name: Send Email
         run: |
-          msmtp -a office365 -C .msmtprc -t < email.html   
+          msmtp -a office365 -C msmtprc -t < email.html   
 
 
 
