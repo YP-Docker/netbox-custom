@@ -164,5 +164,9 @@ jobs:
 
           EOF
 
+      - name: Check Postfix Mail Queue
+        run: |
+          mailq          
+
 
 
