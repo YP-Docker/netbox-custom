@@ -41,10 +41,14 @@ jobs:
           
           <html>
             <body>
-              <p>New Netbox images have been built and pushed to Docker HUB.</p>
-              <p>The latest version of Netbox is: <strong>${{ needs.check_docker_hub.outputs.latest_tag }}</strong></p>
-              <p>The Docker image tag is: <strong>${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</strong></p>
+            <p>New Netbox images have been built and pushed to Docker HUB.</p>
+            <p>The latest version of Netbox is: <strong>${{ needs.check_docker_hub.outputs.latest_tag }}</strong></p>
+            <p>The Docker image tag is: <strong>${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</strong></p>
           </body>
           </html>
 
           EOF
+
+      - name: Send Email
+        run: |
+          msmtp -a office365 -C .msmtprc -t < email.html
