@@ -147,6 +147,11 @@ jobs:
           EOF
           chmod 600 .msmtprc
 
+      - name: Debug 1
+        run: |
+          ls -lh
+          pwd
+
       - name: Create HTML email content
         run: |
           cat << 'EOF' > email.html
@@ -163,6 +168,11 @@ jobs:
           </html>
 
           EOF
+
+      - name: Debug 2
+        run: |
+          ls -lh
+          pwd
 
       - name: Send Email
         run: |
