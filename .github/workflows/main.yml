@@ -145,7 +145,7 @@ jobs:
             auth on
             logfile msmtp.log
           EOF
-          chmod 644 msmtprc
+          chmod 600 msmtprc
           touch msmtp.log
           chmod 644 msmtp.log
 
