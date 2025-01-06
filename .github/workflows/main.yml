@@ -140,8 +140,9 @@ jobs:
             domain ${{ secrets.MAIL_DOMAIN }}
             from ${{ secrets.MAIL_FROM }}
             user ${{ secrets.MAIL_USERNAME }}
-            password ${{ secrets.MAIL_PASSWORD }}
+            password '${{ secrets.MAIL_PASSWORD }}'
             tls on
+            tls_starttls on
             auth on
             logfile msmtp.log
           EOF
