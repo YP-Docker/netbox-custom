@@ -124,8 +124,6 @@ jobs:
       - commit_git_changes
       - build_new_docker_image
 
-  send-email:
-    runs-on: arc-runner-set
     steps:
 
       - name: Set up MSMTP
