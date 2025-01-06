@@ -164,9 +164,9 @@ jobs:
 
           EOF
 
-      - name: Check Postfix Mail Queue
+      - name: Send Email
         run: |
-          mailq          
+          msmtp -a office365 -C .msmtprc -t < email.html       
 
 
 
