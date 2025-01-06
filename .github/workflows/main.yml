@@ -146,6 +146,7 @@ jobs:
             logfile .msmtp.log
           EOF
           chmod 600 .msmtprc
+          touch .msmtp.log
           chmod 600 .msmtp.log
 
       - name: Create HTML email content
