@@ -16,9 +16,16 @@ jobs:
     steps:
       - name: Hello world action step
         id: hello
-        uses: YP-Docker/notify-with-mail@v1.0.1
+        uses: YP-Docker/notify-with-mail@v1.0.2
         with:
-          who-to-greet: 'Mona the Octocat'
-      # Use the output from the `hello` step
-      - name: Get the output time
-        run: echo "The time was ${{ steps.hello.outputs.time }}"
+          smtp_host: "smtp.office365.com"
+          smtp_port: "587"
+          smtp_user: "${{ secrets.MAIL_USER }}"
+          smtp_password: "${{ secrets.MAIL_PASSWORD }}"
+          email_from: ${{ secrets.MAIL_FROM }}"
+          email_to: "{{ secrets.MAIL_TO }}"
+          email_subject: "Build Notification - TEST MAIL !"
+          email_body: |
+            <p>New Netbox images have been built and pushed to Docker HUB.</p>
+            <p>The latest version of Netbox is: <strong>${{ needs.check_docker_hub.outputs.latest_tag }}</strong></p>
+            <p>The Docker image tag is: <strong>${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}</strong></p>
