@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Hello world action step
         id: hello
-        uses: YP-Docker/notify-with-mail@v1.0.2
+        uses: YP-Docker/notify-with-mail@v1.0.3
         with:
           smtp_host: "smtp.office365.com"
           smtp_port: "587"
