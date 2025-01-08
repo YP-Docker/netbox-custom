@@ -5,8 +5,8 @@ permissions:
 
 on:
   workflow_dispatch: # Allow manual trigger
-  schedule:
-    - cron: '0 */6 * * *' # Run every 6 hours
+  #schedule:
+  # - cron: '0 */6 * * *' # Run every 6 hours
 
 jobs:
   # Check Docker Hub for lattest version of Netbox
