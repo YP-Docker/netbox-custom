@@ -11,6 +11,15 @@ jobs:
     runs-on: arc-runner-set-dind
 
     steps:
+
+      - name: Check Secrets
+        run: |
+          echo "SMTP_HOST: ${{ secrets.MAIL_HOST }}"
+          echo "SMTP_USER: ${{ secrets.MAIL_USER }}"
+          echo "SMTP_FROM: ${{ secrets.MAIL_FROM }}"
+          echo "SMTP_TO: ${{ secrets.MAIL_TO }}"
+          echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
+
       - name: Hello world action step
         id: hello
         uses: YP-Docker/notify-with-mail@test-v1.0.2
