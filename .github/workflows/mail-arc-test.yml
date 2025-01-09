@@ -24,7 +24,7 @@ jobs:
         id: hello
         uses: YP-Docker/notify-with-mail@test-v1.0.2
         with:
-          smtp_host: smtp.office365.com
+          smtp_host: ${{ secrets.MAIL_CONNECTION }}
           smtp_port: 587
           smtp_user: ${{ secrets.MAIL_USERNAME }}
           smtp_password: ${{ secrets.MAIL_PASSWORD }}
