@@ -14,8 +14,8 @@ jobs:
 
       - name: Check Secrets
         run: |
-          echo "SMTP_HOST: ${{ secrets.MAIL_HOST }}"
-          echo "SMTP_USER: ${{ secrets.MAIL_USER }}"
+          echo "SMTP_HOST: ${{ secrets.MAIL_CONNECTION }}"
+          echo "SMTP_USER: ${{ secrets.MAIL_USERNAME }}"
           echo "SMTP_FROM: ${{ secrets.MAIL_FROM }}"
           echo "SMTP_TO: ${{ secrets.MAIL_TO }}"
           echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
@@ -26,7 +26,7 @@ jobs:
         with:
           smtp_host: smtp.office365.com
           smtp_port: 587
-          smtp_user: ${{ secrets.MAIL_USER }}
+          smtp_user: ${{ secrets.MAIL_USERNAME }}
           smtp_password: ${{ secrets.MAIL_PASSWORD }}
           email_from: ${{ secrets.MAIL_FROM }}
           email_to: ${{ secrets.MAIL_TO }}
