@@ -12,7 +12,7 @@ jobs:
     services:
       docker:
         image: docker:27.4.1-dind
-        options: --dns=8.8.8.8 --dns=1.1.1.1
+        options: --privileged --network host --dns=8.8.8.8 --dns=1.1.1.1
 
     steps:
 
