@@ -9,10 +9,10 @@ on:
 jobs:
   hello_world_job:
     runs-on: arc-runner-set-dind
-    services:
-      docker:
-        image: docker:27.4.1-dind
-        options: --privileged --network host --dns=8.8.8.8 --dns=1.1.1.1
+
+    container:
+      image: docker:20.10.7
+      options: --privileged --network host
 
     steps:
 
