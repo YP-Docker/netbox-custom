@@ -1,4 +1,4 @@
-name: A job to say hello
+name: Developing of custom Github Action
 
 permissions:
   contents: write
@@ -9,6 +9,10 @@ on:
 jobs:
   hello_world_job:
     runs-on: arc-runner-set-dind
+    services:
+      docker:
+        image: docker:27.4.1-dind
+        options: --dns=8.8.8.8 --dns=1.1.1.1
 
     steps:
 
