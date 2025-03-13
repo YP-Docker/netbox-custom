@@ -58,130 +58,130 @@ jobs:
             echo "update_needed=false" >> $GITHUB_OUTPUT
           fi
 
-#  commit_git_changes:
-#    runs-on: ubuntu-latest
-#    needs: check_docker_hub
-#    if: ${{needs.check_docker_hub.outputs.update_needed == 'true'}}
-#
-#    steps:
-#      - name: Checkout repository
-#        uses: actions/checkout@v4
-#
-#      - name: Create file with newest version
-#        id: create_file_with_latest_tag
-#        run: |
-#          DIRECTORY="Docker"
-#          FILE="$DIRECTORY/latest_version.txt"
-#
-#          echo "${{ needs.check_docker_hub.outputs.latest_tag }}" > $FILE
-#
-#      - name: Commit and Push Changes
-#        uses: EndBug/add-and-commit@v9
-#        id: commit_changes_with_latest_tag
-#        with:
-#          add: 'Docker/latest_version.txt'
-#          message: "New version of Netbox Docker image has been uploaded with tag: ${{ needs.check_docker_hub.outputs.latest_tag }}"
-#
-#      - name: Notify about the new version
-#        run: |
-#          echo "New version found: ${{ needs.check_docker_hub.outputs.latest_tag }}"
-#
-#  build_new_docker_image:
-#    runs-on: ubuntu-latest
-#    needs:
-#      - check_docker_hub
-#      - commit_git_changes
-#
-#    steps:
-#      - name: Login to Docker Hub
-#        uses: docker/login-action@v3
-#        with:
-#          username: ${{ secrets.DOCKERHUB_USERNAME }}
-#          password: ${{ secrets.DOCKERHUB_TOKEN }}
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v3
-#
-#      - name: Get timestamp
-#        id: tag_timestamp
-#        run: |
-#          echo "timestamp=$(date +'%d%m%Y-%H%M')" >> $GITHUB_OUTPUT
-#          ls -lh
-#
-#      - name: Build and push
-#        uses: docker/build-push-action@v6
-#        with:
-#          context: "{{defaultContext}}:Docker/netbox/"
-#          sbom: true
-#          provenance: mode=max
-#          push: true
-#          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}
+  commit_git_changes:
+     runs-on: ubuntu-latest
+     needs: check_docker_hub
+     if: ${{needs.check_docker_hub.outputs.update_needed == 'true'}}
+  
+     steps:
+       - name: Checkout repository
+         uses: actions/checkout@v4
+  
+       - name: Create file with newest version
+         id: create_file_with_latest_tag
+         run: |
+           DIRECTORY="Docker"
+           FILE="$DIRECTORY/latest_version.txt"
+  
+           echo "${{ needs.check_docker_hub.outputs.latest_tag }}" > $FILE
+  
+       - name: Commit and Push Changes
+         uses: EndBug/add-and-commit@v9
+         id: commit_changes_with_latest_tag
+         with:
+           add: 'Docker/latest_version.txt'
+           message: "New version of Netbox Docker image has been uploaded with tag: ${{ needs.check_docker_hub.outputs.latest_tag }}"
+  
+       - name: Notify about the new version
+         run: |
+           echo "New version found: ${{ needs.check_docker_hub.outputs.latest_tag }}"
 
-  send_notification_email:
-    runs-on: ubuntu-latest
-    needs:
-      - check_docker_hub
-#      - commit_git_changes
-#      - build_new_docker_image
+  build_new_docker_image:
+     runs-on: ubuntu-latest
+     needs:
+       - check_docker_hub
+       - commit_git_changes
+  
+     steps:
+       - name: Login to Docker Hub
+         uses: docker/login-action@v3
+         with:
+           username: ${{ secrets.DOCKERHUB_USERNAME }}
+           password: ${{ secrets.DOCKERHUB_TOKEN }}
+  
+       - name: Set up Docker Buildx
+         uses: docker/setup-buildx-action@v3
+  
+       - name: Get timestamp
+         id: tag_timestamp
+         run: |
+           echo "timestamp=$(date +'%d%m%Y-%H%M')" >> $GITHUB_OUTPUT
+           ls -lh
+  
+       - name: Build and push
+         uses: docker/build-push-action@v6
+         with:
+           context: "{{defaultContext}}:Docker/netbox/"
+           sbom: true
+           provenance: mode=max
+           push: true
+           tags: ${{ secrets.DOCKERHUB_USERNAME }}/nettools:netbox-${{ needs.check_docker_hub.outputs.latest_tag }}-build.${{ steps.tag_timestamp.outputs.timestamp }}
 
-    steps:
+#   send_notification_email:
+#     runs-on: ubuntu-latest
+#     needs:
+#       - check_docker_hub
+# #      - commit_git_changes
+# #      - build_new_docker_image
 
-      - name: Set up Postfix
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y postfix msmtp
+#     steps:
 
-      - name: Configure Postfix
-        run: |
-          # Set your hostname for Postfix
-          sudo postconf -e 'myhostname = github-actions.${{ secrets.MAIL_DOMAIN }}'
-          sudo postconf -e 'mydomain  = ${{ secrets.MAIL_DOMAIN }}'
-          sudo postconf -e 'myorigin  = ${{ secrets.MAIL_DOMAIN }}'
-          echo "runner no-reply@${{ secrets.MAIL_DOMAIN }}" | sudo tee /etc/postfix/generic
-          sudo postmap /etc/postfix/generic
-          sudo postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
-          echo "[smtp.office365.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
-          sudo postmap /etc/postfix/sasl_passwd
+#       - name: Set up Postfix
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y postfix msmtp
 
-      - name: Create HTML email content
-        run: |
-          cat <<EOM > email.html
-          <html>
-          <head><title>Test HTML Email</title></head>
-          <body>
-          <p>New Netbox images have been built and pushed to Docker HUB.</p>
-          <p>The latest version of Netbox is: <strong>TEST</strong></p>
-          <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
-          </body>
-          </html>
-          EOM
+#       - name: Configure Postfix
+#         run: |
+#           # Set your hostname for Postfix
+#           sudo postconf -e 'myhostname = github-actions.${{ secrets.MAIL_DOMAIN }}'
+#           sudo postconf -e 'mydomain  = ${{ secrets.MAIL_DOMAIN }}'
+#           sudo postconf -e 'myorigin  = ${{ secrets.MAIL_DOMAIN }}'
+#           echo "runner no-reply@${{ secrets.MAIL_DOMAIN }}" | sudo tee /etc/postfix/generic
+#           sudo postmap /etc/postfix/generic
+#           sudo postconf -e 'smtp_generic_maps = hash:/etc/postfix/generic'
+#           echo "[smtp.office365.com]:587 ${{ secrets.MAIL_USERNAME }}:${{ secrets.MAIL_PASSWORD }}" | sudo tee /etc/postfix/sasl_passwd
+#           sudo postmap /etc/postfix/sasl_passwd
 
-      - name: Send email to multiple recipients
-        run: |
-          # Retrieve the secret containing the email addresses
-          emails=" ${{ secrets.MAIL_TO }}"
+#       - name: Create HTML email content
+#         run: |
+#           cat <<EOM > email.html
+#           <html>
+#           <head><title>Test HTML Email</title></head>
+#           <body>
+#           <p>New Netbox images have been built and pushed to Docker HUB.</p>
+#           <p>The latest version of Netbox is: <strong>TEST</strong></p>
+#           <p>The Docker image tag is: <strong>TEST/nettools:netbox-TEST-build.TEST</strong></p>
+#           </body>
+#           </html>
+#           EOM
 
-          # Split the emails by semicolon
-          IFS=';' read -r -a email_array <<< "$emails"
+#       - name: Send email to multiple recipients
+#         run: |
+#           # Retrieve the secret containing the email addresses
+#           emails=" ${{ secrets.MAIL_TO }}"
 
-          # Loop through the array of email addresses and send the email
-          for recipient in "${email_array[@]}"; do
-            (echo "To: $recipient"; 
-             echo "Subject: Test HTML Email"; 
-             echo "MIME-Version: 1.0"; 
-             echo "Content-Type: text/html; charset=UTF-8"; 
-             echo ""; 
-             cat email.html) | sendmail -v -t
-            echo "Sent email to $recipient"
-          done
+#           # Split the emails by semicolon
+#           IFS=';' read -r -a email_array <<< "$emails"
 
-      - name: Check Postfix Mail Log
-        run: |
-          sudo cat /var/log/mail.log
+#           # Loop through the array of email addresses and send the email
+#           for recipient in "${email_array[@]}"; do
+#             (echo "To: $recipient"; 
+#              echo "Subject: Test HTML Email"; 
+#              echo "MIME-Version: 1.0"; 
+#              echo "Content-Type: text/html; charset=UTF-8"; 
+#              echo ""; 
+#              cat email.html) | sendmail -v -t
+#             echo "Sent email to $recipient"
+#           done
 
-      - name: Check Postfix Mail Queue
-        run: |
-          mailq
+#       - name: Check Postfix Mail Log
+#         run: |
+#           sudo cat /var/log/mail.log
+
+#       - name: Check Postfix Mail Queue
+#         run: |
+#           mailq
 
 
 
