@@ -1,7 +1,8 @@
 FROM netboxcommunity/netbox:latest
 
 COPY ./plugin_requirements.txt /opt/netbox/
-RUN /usr/local/bin/uv pip install -r /opt/netbox/plugin_requirements.txt
+RUN /usr/local/bin/uv pip install -r /opt/netbox/plugin_requirements.txt && \
+    rm /opt/netbox/netbox/local/release.yaml
 
 # These lines are only required if your plugin has its own static files.
 COPY configuration/configuration.py /etc/netbox/config/configuration.py
